@@ -78,6 +78,7 @@
             </intent-filter>
         </receiver>
         <service android:enabled="true" android:exported="true" android:name="com.xtc.moment.service.PublishService"/>
+        <service android:name="com.xtc.moment.service.AutoLikeService" android:exported="false"/>
         <activity android:exported="true" android:launchMode="singleInstance" android:name="com.xtc.moment.share.view.ShareToMomentActivity" android:theme="@style/Theme_Share_Moment"/>
         <provider android:authorities="com.xtc.share.moment" android:exported="true" android:name="com.xtc.moment.share.model.AppShareProvider"/>
         <provider android:authorities="com.xtc.moment.momentProvider" android:exported="true" android:name="com.xtc.moment.provider.MomentProvider"/>

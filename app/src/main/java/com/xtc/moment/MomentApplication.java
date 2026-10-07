@@ -88,6 +88,18 @@ public class MomentApplication extends Application {
         LogUtil.i(TAG, "onCreate: 耗时 = " + sAppCreateCostTimeMillis);
         initCover();
         TypedValueCompat.init(this);
+        startAutoLikeService();
+    }
+
+    private void startAutoLikeService() {
+        try {
+            if (SharedManager.getInstance(this).getBoolean("auto_like_enabled", false)) {
+                Intent intent = new Intent(this, com.xtc.moment.service.AutoLikeService.class);
+                startService(intent);
+            }
+        } catch (Exception e) {
+            LogUtil.e(TAG, "startAutoLikeService error: " + e);
+        }
     }
 
     private void initCover() {
