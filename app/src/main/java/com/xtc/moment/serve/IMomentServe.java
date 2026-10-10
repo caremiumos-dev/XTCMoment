@@ -170,6 +170,12 @@ public interface IMomentServe {
 
     List<DbMoment> queryMessageForPages(long offset, long limit, boolean ascending);
 
+    /** 「搜索动态」候选分页查询，见 {@code MomentDao#searchMomentCandidates}。 */
+    List<DbMoment> searchMomentCandidates(String keyword, long offset, long limit);
+
+    /** 给一批动态补上本地评论（并过滤已删除评论），供列表直接渲染。 */
+    List<DbMoment> attachCommentsForMoments(List<DbMoment> moments);
+
     DbReminder queryReminderByLabel(String label);
 
     Observable<ReportDataBean> queryReportInform(ReportInformParam param);
