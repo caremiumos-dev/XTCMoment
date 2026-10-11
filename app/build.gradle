@@ -107,11 +107,11 @@ dependencies {
     implementation 'android.arch.core:common:1.1.1'
     implementation 'android.arch.core:runtime:1.1.1'
 
-    implementation 'com.github.bumptech.glide:glide:4.9.0'
-    annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
-    implementation 'com.github.bumptech.glide:annotations:4.9.0'
-    implementation 'com.github.bumptech.glide:gifdecoder:4.9.0'
-    implementation 'com.github.bumptech.glide:disklrucache:4.9.0'
+    implementation 'com.github.bumptech.glide:glide:5.0.9'
+    annotationProcessor 'com.github.bumptech.glide:compiler:5.0.9'
+    implementation 'com.github.bumptech.glide:annotations:5.0.9'
+    implementation 'com.github.bumptech.glide:gifdecoder:5.0.9'
+    implementation 'com.github.bumptech.glide:disklrucache:5.0.9'
     implementation 'jp.wasabeef:glide-transformations:3.0.1'
 
     implementation 'com.airbnb.android:lottie:2.7.0'
