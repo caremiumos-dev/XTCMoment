@@ -143,7 +143,7 @@ dependencies {
     implementation 'com.badlogicgames.gdx:gdx:1.9.10'
     implementation 'com.esotericsoftware.spine:spine-libgdx:3.8.55.1'
 
-    implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.9.24'
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib:2.4.21'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.2'
 
