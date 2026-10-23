@@ -15,6 +15,7 @@ import com.xtc.log.LogUtil;
 import com.xtc.moment.R;
 import com.xtc.moment.asynclayout.AsyncLayoutLoader;
 import com.xtc.moment.module.Constants;
+import com.xtc.moment.module.bean.Friend;
 import com.xtc.moment.module.bean.FriendsVisibleBean;
 import com.xtc.moment.util.SystemUtil;
 import com.xtc.moment.widget.TouchScrollbarRecyclerView;
@@ -111,8 +112,21 @@ public class VisibleFriendsListActivity
         if (this.friendsVisibleBean == null) {
             this.friendsVisibleBean = new FriendsVisibleBean();
         }
+        bindFriends(new java.util.ArrayList<Friend>());
+        this.presenter.loadAllFriend();
+    }
+
+    @Override
+    public void showFriends(final List<Friend> friends) {
+        if (isFinishing() || isDestroyed()) {
+            return;
+        }
+        bindFriends(friends);
+    }
+
+    private void bindFriends(List<Friend> friends) {
         this.visibleFriendsAdapter = new VisibleFriendsAdapter(this.context,
-                this.presenter.getAllFriend(), this.friendsVisibleBean,
+                friends, this.friendsVisibleBean,
                 new VisibleFriendsAdapter.SelectedFriendsCallback() {
                     @Override
                     public void onDataSelected(List<String> selectedWatchIds) {

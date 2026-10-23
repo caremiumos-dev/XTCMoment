@@ -13,14 +13,18 @@ import com.xtc.moment.module.bean.FriendsVisibleBean;
 import com.xtc.moment.module.bean.FriendsVisibleBeanReq;
 import com.xtc.moment.module.publish.visible.VisibleTypeActivity;
 import com.xtc.moment.net.MomentHttpServiceProxy;
+import com.xtc.moment.serve.FriendInfoServeImpl;
 import com.xtc.moment.serve.IMomentServe;
+import com.xtc.moment.serve.IFriendInfoServe;
 import com.xtc.moment.serve.MomentServeImpl;
 import com.xtc.moment.serve.ServerCache;
 import com.xtc.moment.util.ContactUtil;
 import com.xtc.utils.common.CollectionUtil;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import rx.Subscriber;
 
@@ -35,6 +39,7 @@ public class FriendsVisibleRangePresenter extends MvpPresenter<IFriendsVisibleRa
     private IMomentServe iMomentServe;
     private MomentHttpServiceProxy momentHttpServiceProxy;
     private ContactManager contactManager;
+    private IFriendInfoServe friendInfoServe;
     private volatile FriendsVisibleBean momentVisibleBean = new FriendsVisibleBean();
 
     public FriendsVisibleRangePresenter(Context context) {
@@ -43,6 +48,7 @@ public class FriendsVisibleRangePresenter extends MvpPresenter<IFriendsVisibleRa
         this.momentHttpServiceProxy = (MomentHttpServiceProxy) ServerCache
                 .getHttpService(context, MomentHttpServiceProxy.class);
         this.contactManager = ContactManager.getInstance(context);
+        this.friendInfoServe = FriendInfoServeImpl.getInstance(context);
     }
 
     public void getAllVisibleFriends(final String momentId) {
@@ -109,10 +115,28 @@ public class FriendsVisibleRangePresenter extends MvpPresenter<IFriendsVisibleRa
 
     public List<Friend> getFriends(List<String> watchIds) {
         ArrayList<Friend> friends = new ArrayList<>();
+        if (CollectionUtil.isEmpty(watchIds)) {
+            return friends;
+        }
+        Map<String, Friend> serverFriends = new HashMap<>();
+        List<Friend> allServerFriends = this.friendInfoServe.getAllFriendInfo();
+        if (allServerFriends != null) {
+            for (Friend friend : allServerFriends) {
+                if (friend != null && !TextUtils.isEmpty(friend.getWatchId())) {
+                    serverFriends.put(friend.getWatchId(), friend);
+                }
+            }
+        }
         for (String watchId : watchIds) {
             if (!TextUtils.isEmpty(watchId)) {
-                friends.add(ContactUtil.convertToFriend(this.contactManager
-                        .getContactWithoutShortNumberByWatchIdSync(watchId)));
+                Friend friend = serverFriends.get(watchId);
+                if (friend == null) {
+                    friend = ContactUtil.convertToFriend(this.contactManager
+                            .getContactWithoutShortNumberByWatchIdSync(watchId));
+                }
+                if (friend != null) {
+                    friends.add(friend);
+                }
             }
         }
         return friends;
