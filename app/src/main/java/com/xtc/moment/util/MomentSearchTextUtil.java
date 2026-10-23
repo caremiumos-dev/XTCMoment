@@ -1,7 +1,5 @@
 package com.xtc.moment.util;
 
-import android.text.TextUtils;
-
 import com.xtc.moment.db.bean.DbMoment;
 import com.xtc.utils.encode.JSONUtil;
 
@@ -38,7 +36,7 @@ public final class MomentSearchTextUtil {
 
     /** 关键词归一化：去首尾空白 + 小写（大小写不敏感匹配）。 */
     public static String normalize(String keyword) {
-        if (TextUtils.isEmpty(keyword)) {
+        if (isEmpty(keyword)) {
             return "";
         }
         return keyword.trim().toLowerCase(Locale.ROOT);
@@ -47,16 +45,16 @@ public final class MomentSearchTextUtil {
     /** 关键词是否可用于检索。 */
     public static boolean isValidKeyword(String keyword) {
         String normalized = normalize(keyword);
-        return !TextUtils.isEmpty(normalized) && normalized.length() <= MAX_KEYWORD_LENGTH;
+        return !isEmpty(normalized) && normalized.length() <= MAX_KEYWORD_LENGTH;
     }
 
     /** 该动态是否命中关键词（关键词需已 {@link #normalize(String)}）。 */
     public static boolean matches(DbMoment moment, String normalizedKeyword) {
-        if (moment == null || TextUtils.isEmpty(normalizedKeyword)) {
+        if (moment == null || isEmpty(normalizedKeyword)) {
             return false;
         }
         String text = extractSearchableText(moment);
-        return !TextUtils.isEmpty(text) && text.contains(normalizedKeyword);
+        return !isEmpty(text) && text.contains(normalizedKeyword);
     }
 
     /**
@@ -80,7 +78,7 @@ public final class MomentSearchTextUtil {
 
     /** 追加一个字段：JSON 走白名单取值，纯文本直接追加。 */
     private static void appendText(StringBuilder builder, String raw) {
-        if (TextUtils.isEmpty(raw)) {
+        if (isEmpty(raw)) {
             return;
         }
         String trimmed = raw.trim();
@@ -137,5 +135,9 @@ public final class MomentSearchTextUtil {
             }
         }
         return false;
+    }
+
+    private static boolean isEmpty(String value) {
+        return value == null || value.length() == 0;
     }
 }

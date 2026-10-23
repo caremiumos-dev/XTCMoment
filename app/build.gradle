@@ -186,6 +186,8 @@ logger.lifecycle("moment: baseUrl=" + (momentOverrideUrl ? momentScheme + moment
         + " encrypt=" + (momentOverrideEncrypt ? momentEncrypt : "(跟随服务端)"))
 
 dependencies {
+    testImplementation 'junit:junit:4.13.2'
+
     // 原厂 APK 使用 25.4.0 的 support 库，保持同版本以免资源 id 与行为变化。
     implementation 'com.android.support:design:25.4.0'
     implementation 'com.android.support:appcompat-v7:25.4.0'

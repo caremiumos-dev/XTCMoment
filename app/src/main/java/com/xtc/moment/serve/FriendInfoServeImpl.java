@@ -15,6 +15,7 @@ import com.xtc.moment.net.MomentHttpServiceProxy;
 import com.xtc.moment.net.bean.GetFriendAvatarBean;
 import com.xtc.moment.net.bean.GetFriendListBean;
 import com.xtc.moment.util.ContactUtil;
+import com.xtc.moment.util.FriendListPolicy;
 import com.xtc.moment.util.HandlerUtil;
 
 import org.greenrobot.eventbus.EventBus;
@@ -70,13 +71,17 @@ public class FriendInfoServeImpl extends BaseServe implements ContactChangeListe
         }
         if (this.friends == null || isUpdate) {
             List<Friend> serverFriends = loadFriendsFromServer();
+            this.friends = FriendListPolicy.serverOrProvider(serverFriends,
+                    new FriendListPolicy.FriendProvider() {
+                        @Override
+                        public List<Friend> load() {
+                            return ContactUtil.convertToFriend(
+                                    contactManager.getAllContactsSync());
+                        }
+                    });
             if (serverFriends != null && !serverFriends.isEmpty()) {
-                this.friends = serverFriends;
                 // 好友列表来自服务端时，头像也从服务端批量拉取并覆盖。
                 applyServerAvatars(this.friends);
-            } else {
-                // 服务端没有好友数据时才走本机通讯录 provider。
-                this.friends = ContactUtil.convertToFriend(this.contactManager.getAllContactsSync());
             }
         }
         return this.friends;

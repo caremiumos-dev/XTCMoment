@@ -1,6 +1,5 @@
 package com.xtc.utils.encode;
 
-import android.text.TextUtils;
 import android.util.Base64;
 
 import com.google.gson.Gson;
@@ -120,7 +119,7 @@ public class JSONUtil {
     }
 
     public static <T> T fromJSON(String json, Class<T> classType) {
-        if (TextUtils.isEmpty(json)) {
+        if (isEmpty(json)) {
             return null;
         }
         try {
@@ -133,7 +132,7 @@ public class JSONUtil {
 
     /** Deserialises a parameterised type, e.g. {@code List.class, Foo.class}. */
     public static <T> T fromJSON(String json, Class<?> rawType, Class<?>... typeArguments) {
-        if (TextUtils.isEmpty(json)) {
+        if (isEmpty(json)) {
             return null;
         }
         try {
@@ -151,5 +150,9 @@ public class JSONUtil {
             LogUtil.e(TAG, e);
             return null;
         }
+    }
+
+    private static boolean isEmpty(String value) {
+        return value == null || value.length() == 0;
     }
 }

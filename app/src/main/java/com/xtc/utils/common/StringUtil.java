@@ -1,7 +1,5 @@
 package com.xtc.utils.common;
 
-import android.text.TextUtils;
-
 import com.xtc.moment.module.Constants;
 
 import java.util.List;
@@ -16,6 +14,9 @@ public class StringUtil {
 
     /** Pads a number up to {@code length} with the {@code "s"} specifier. */
     public static String getBlank(int length) {
+        if (length <= 0) {
+            return "";
+        }
         return String.format("%" + length + Constants.ENGLISH_PLURAL, "");
     }
 
@@ -28,7 +29,7 @@ public class StringUtil {
         }
         try {
             for (String part : parts) {
-                if (TextUtils.isEmpty(part.trim()) || (value = Integer.parseInt(part.trim())) < 0 || value > 255) {
+                if (isEmpty(part.trim()) || (value = Integer.parseInt(part.trim())) < 0 || value > 255) {
                     return false;
                 }
             }
@@ -40,12 +41,12 @@ public class StringUtil {
 
     /** @return true when {@code value} only contains digits. */
     public static boolean isDigits(String value) {
-        return !TextUtils.isEmpty(value) && value.matches("[0-9]*");
+        return !isEmpty(value) && value.matches("[0-9]*");
     }
 
     /** @return true when {@code value} starts with a digit. */
     public static boolean isStartWithDigit(String value) {
-        if (TextUtils.isEmpty(value)) {
+        if (isEmpty(value)) {
             return false;
         }
         return Pattern.compile("^\\d+").matcher(value.charAt(0) + "").matches();
@@ -58,12 +59,12 @@ public class StringUtil {
 
     /** @return true when {@code url} matches the http/ftp pattern. */
     public static boolean isUrl(String url) {
-        return !TextUtils.isEmpty(url) && url.matches("^((https?)|(ftp))://(?:(\\s+?)(?::(\\s+?))?@)?([a-zA-Z0-9\\-.]+)(?::(\\d+))?((?:/[a-zA-Z0-9\\-._?,'+\\&%$=~*!():@\\\\]*)+)?$");
+        return !isEmpty(url) && url.matches("^((https?)|(ftp))://(?:(\\s+?)(?::(\\s+?))?@)?([a-zA-Z0-9\\-.]+)(?::(\\d+))?((?:/[a-zA-Z0-9\\-._?,'+\\&%$=~*!():@\\\\]*)+)?$");
     }
 
     /** Converts each character of {@code text} into its code point. */
     public static String stringToUnicode(String text) {
-        if (TextUtils.isEmpty(text)) {
+        if (isEmpty(text)) {
             return null;
         }
         char[] chars = text.toCharArray();
@@ -76,7 +77,7 @@ public class StringUtil {
 
     /** Decodes a five-digit-per-character code string back into text. */
     public static String unicodeToString(String text) {
-        if (TextUtils.isEmpty(text)) {
+        if (isEmpty(text)) {
             return null;
         }
         String trimmed = text.trim();
@@ -208,5 +209,9 @@ public class StringUtil {
             return String.format("%02d", Integer.valueOf(value));
         }
         return "" + Constants.Share.VIDEO_DURATION_PATTERN;
+    }
+
+    private static boolean isEmpty(String value) {
+        return value == null || value.length() == 0;
     }
 }

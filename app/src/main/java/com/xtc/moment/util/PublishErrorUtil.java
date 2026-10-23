@@ -2,7 +2,6 @@ package com.xtc.moment.util;
 
 import android.content.Context;
 import android.os.Looper;
-import android.text.TextUtils;
 import android.widget.Toast;
 
 import com.xtc.log.LogUtil;
@@ -47,7 +46,7 @@ public final class PublishErrorUtil {
      * @return 文案资源 id；未识别时返回「发布失败」
      */
     public static int getFailMessageRes(String message) {
-        if (TextUtils.isEmpty(message)) {
+        if (isEmpty(message)) {
             return R.string.publish_fail;
         }
         if (message.contains(ERROR_CODE_REQUESTING) || message.contains(ERROR_CODE_FREQUENT_REQUEST)) {
@@ -73,7 +72,7 @@ public final class PublishErrorUtil {
 
     /** @return true when the server code is the suspended-account one. */
     public static boolean isAccountBanned(String message) {
-        return !TextUtils.isEmpty(message) && message.contains(ERROR_CODE_ACCOUNT_ABNORMAL);
+        return !isEmpty(message) && message.contains(ERROR_CODE_ACCOUNT_ABNORMAL);
     }
 
     /**
@@ -180,5 +179,9 @@ public final class PublishErrorUtil {
                                 Toast.LENGTH_SHORT).show();
                     }
                 });
+    }
+
+    private static boolean isEmpty(String value) {
+        return value == null || value.length() == 0;
     }
 }

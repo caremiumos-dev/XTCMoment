@@ -1,7 +1,5 @@
 package com.xtc.utils.encode;
 
-import android.text.TextUtils;
-
 import java.nio.charset.Charset;
 import java.security.Key;
 
@@ -49,7 +47,7 @@ public class DesUtils {
 
     /** Parses a hex string into bytes, returning an empty array when invalid. */
     private static byte[] fromHex(String hexText) {
-        if (TextUtils.isEmpty(hexText)) {
+        if (hexText == null || hexText.length() == 0) {
             return new byte[0];
         }
         byte[] raw = null;

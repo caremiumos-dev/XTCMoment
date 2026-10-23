@@ -19,12 +19,11 @@ import com.xtc.moment.serve.IFriendInfoServe;
 import com.xtc.moment.serve.MomentServeImpl;
 import com.xtc.moment.serve.ServerCache;
 import com.xtc.moment.util.ContactUtil;
+import com.xtc.moment.util.FriendListPolicy;
 import com.xtc.utils.common.CollectionUtil;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import rx.Subscriber;
 
@@ -114,32 +113,15 @@ public class FriendsVisibleRangePresenter extends MvpPresenter<IFriendsVisibleRa
     }
 
     public List<Friend> getFriends(List<String> watchIds) {
-        ArrayList<Friend> friends = new ArrayList<>();
-        if (CollectionUtil.isEmpty(watchIds)) {
-            return friends;
-        }
-        Map<String, Friend> serverFriends = new HashMap<>();
-        List<Friend> allServerFriends = this.friendInfoServe.getAllFriendInfo();
-        if (allServerFriends != null) {
-            for (Friend friend : allServerFriends) {
-                if (friend != null && !TextUtils.isEmpty(friend.getWatchId())) {
-                    serverFriends.put(friend.getWatchId(), friend);
-                }
-            }
-        }
-        for (String watchId : watchIds) {
-            if (!TextUtils.isEmpty(watchId)) {
-                Friend friend = serverFriends.get(watchId);
-                if (friend == null) {
-                    friend = ContactUtil.convertToFriend(this.contactManager
-                            .getContactWithoutShortNumberByWatchIdSync(watchId));
-                }
-                if (friend != null) {
-                    friends.add(friend);
-                }
-            }
-        }
-        return friends;
+        return FriendListPolicy.resolveWatchIds(
+                this.friendInfoServe.getAllFriendInfo(), watchIds,
+                new FriendListPolicy.ContactFallback() {
+                    @Override
+                    public Friend find(String watchId) {
+                        return ContactUtil.convertToFriend(contactManager
+                                .getContactWithoutShortNumberByWatchIdSync(watchId));
+                    }
+                });
     }
 
     public void resetVisibleRange() {

@@ -2,8 +2,6 @@ package com.xtc.database.ormlite;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.text.TextUtils;
-
 import com.j256.ormlite.misc.JavaxPersistenceConfigurer;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.DatabaseTable;
@@ -135,7 +133,7 @@ public class DatabaseUtil {
             LogUtil.e(TAG, "list is null.");
             return;
         }
-        if (TextUtils.isEmpty(columnName) || TextUtils.isEmpty(columnLimit)) {
+        if (isEmpty(columnName) || isEmpty(columnLimit)) {
             LogUtil.e(TAG, "columnName is null or limit is null.");
             return;
         }
@@ -164,7 +162,7 @@ public class DatabaseUtil {
     }
 
     private static boolean containsChanged(List<ColumnStruct> columns, ColumnStruct column) {
-        if (column == null || TextUtils.isEmpty(column.getColumnName())) {
+        if (column == null || isEmpty(column.getColumnName())) {
             return false;
         }
         Iterator<ColumnStruct> iterator = columns.iterator();
@@ -226,5 +224,9 @@ public class DatabaseUtil {
             }
         }
         return null;
+    }
+
+    private static boolean isEmpty(String value) {
+        return value == null || value.length() == 0;
     }
 }

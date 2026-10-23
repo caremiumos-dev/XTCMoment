@@ -8,6 +8,7 @@ import com.xtc.moment.module.bean.Friend;
 import com.xtc.moment.serve.FriendInfoServeImpl;
 import com.xtc.moment.serve.IFriendInfoServe;
 import com.xtc.moment.util.ContactUtil;
+import com.xtc.moment.util.FriendListPolicy;
 import com.xtc.moment.util.HandlerUtil;
 
 import java.util.List;
@@ -38,11 +39,15 @@ public class VisibleFriendListPresenter extends MvpPresenter<IVisibleFrienListVi
         HandlerUtil.runOnBackground(new Runnable() {
             @Override
             public void run() {
-                List<Friend> friends = friendInfoServe.getAllFriendInfo();
-                if (friends == null || friends.isEmpty()) {
-                    friends = ContactUtil.convertToFriendWithPhoneAccount(
-                            contactManager.getAllContactsSync());
-                }
+                List<Friend> friends = FriendListPolicy.serverOrProvider(
+                        friendInfoServe.getAllFriendInfo(),
+                        new FriendListPolicy.FriendProvider() {
+                            @Override
+                            public List<Friend> load() {
+                                return ContactUtil.convertToFriendWithPhoneAccount(
+                                        contactManager.getAllContactsSync());
+                            }
+                        });
                 final List<Friend> result = friends;
                 HandlerUtil.runOnUIThread(new Runnable() {
                     @Override
