@@ -40,11 +40,12 @@ public class FriendInfoServeImpl extends BaseServe implements ContactChangeListe
 
     private static final String TAG = "FriendInfoServeImpl";
 
-    /** 服务端好友请求的最长等待时间，超时即回退本机通讯录。 */
-    private static final long SERVER_TIMEOUT_MILLIS = 3000L;
+    /** 服务端好友请求的最长等待时间；香港等慢线路留足响应时间。 */
+    private static final long SERVER_TIMEOUT_MILLIS = 10000L;
 
     private ContactManager contactManager;
-    private List<Friend> friends;
+    private volatile List<Friend> friends;
+    private volatile boolean friendsFromServer;
     private MomentHttpServiceProxy momentHttpServiceProxy;
 
     public FriendInfoServeImpl(Context context) {
@@ -71,17 +72,24 @@ public class FriendInfoServeImpl extends BaseServe implements ContactChangeListe
         }
         if (this.friends == null || isUpdate) {
             List<Friend> serverFriends = loadFriendsFromServer();
-            this.friends = FriendListPolicy.serverOrProvider(serverFriends,
-                    new FriendListPolicy.FriendProvider() {
-                        @Override
-                        public List<Friend> load() {
-                            return ContactUtil.convertToFriend(
-                                    contactManager.getAllContactsSync());
-                        }
-                    });
-            if (serverFriends != null && !serverFriends.isEmpty()) {
+            if (FriendListPolicy.shouldRetainCachedServerFriends(
+                    serverFriends, this.friends, this.friendsFromServer)) {
+                // 网络超时不代表好友关系失效，继续使用上一次成功的服务端列表。
+            } else if (serverFriends != null && !serverFriends.isEmpty()) {
+                this.friends = serverFriends;
+                this.friendsFromServer = true;
                 // 好友列表来自服务端时，头像也从服务端批量拉取并覆盖。
                 applyServerAvatars(this.friends);
+            } else {
+                this.friends = FriendListPolicy.serverOrProvider(serverFriends,
+                        new FriendListPolicy.FriendProvider() {
+                            @Override
+                            public List<Friend> load() {
+                                return ContactUtil.convertToFriend(
+                                        contactManager.getAllContactsSync());
+                            }
+                        });
+                this.friendsFromServer = false;
             }
         }
         return this.friends;

@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
@@ -56,6 +57,26 @@ public class FriendListPolicyTest {
     @Test
     public void serverOrProvider_preservesNullWhenNoProviderExists() {
         assertNull(FriendListPolicy.serverOrProvider(null, null));
+    }
+
+    @Test
+    public void failedRefreshRetainsCachedServerFriends() {
+        List<Friend> cachedServerFriends = Collections.singletonList(friend("server", "Server"));
+
+        assertTrue(FriendListPolicy.shouldRetainCachedServerFriends(
+                null, cachedServerFriends, true));
+    }
+
+    @Test
+    public void providerCacheAndSuccessfulEmptyServerDoNotUseRetainedBranch() {
+        List<Friend> cachedProviderFriends = Collections.singletonList(friend("provider", "Provider"));
+
+        assertFalse(FriendListPolicy.shouldRetainCachedServerFriends(
+                null, cachedProviderFriends, false));
+        assertFalse(FriendListPolicy.shouldRetainCachedServerFriends(
+                Collections.<Friend>emptyList(), cachedProviderFriends, true));
+        assertFalse(FriendListPolicy.shouldRetainCachedServerFriends(
+                null, Collections.<Friend>emptyList(), true));
     }
 
     @Test

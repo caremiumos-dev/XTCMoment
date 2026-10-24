@@ -39,6 +39,21 @@ public final class FriendListPolicy {
     }
 
     /**
+     * A failed server refresh must not replace a previously loaded server
+     * list with the local provider. A successful empty response is not a
+     * failed refresh, so that case still uses the provider fallback.
+     */
+    public static boolean shouldRetainCachedServerFriends(
+            List<Friend> refreshedServerFriends,
+            List<Friend> cachedFriends,
+            boolean cachedFriendsFromServer) {
+        return refreshedServerFriends == null
+                && cachedFriendsFromServer
+                && cachedFriends != null
+                && !cachedFriends.isEmpty();
+    }
+
+    /**
      * Resolves watch ids in request order. A server match wins; only missing
      * ids are looked up in the local provider. Invalid ids and unresolved
      * contacts are omitted.
